@@ -2,7 +2,7 @@ import { Router } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { validation } from "../../middleware/valdation.middleware.js";
-import { confirmEmail, forgetPasswordService, loginService, refreshToken, resendOtpService, resetPasswordService, signUpService, socialLogin } from "./auth.service.js";
+import { confirmEmail, logout, logoutAll, forgetPasswordService, loginService, refreshToken, resendOtpService, resetPasswordService, signUpService, socialLogin } from "./auth.service.js";
 import { loginSchema, resetPasswordSchema, signUpSchema } from "./auth.validation.js";
 import { auth } from "../../middleware/auth.middleware.js";
 
@@ -26,5 +26,7 @@ router.get("/reset-password/:token",(req, res)=>{
 })
 
 router.patch("/forget-password", forgetPasswordService)
+router.post("/logout", auth, logout)
+router.post("/logout-all", auth, logoutAll)
 
 export default router

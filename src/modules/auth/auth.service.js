@@ -5,7 +5,7 @@ import { generateOtpHtml } from "../../utils/email/html.otp.template.js";
 import { createOtp } from "../../utils/email/otp.js";
 import { sendEmail } from "../../utils/email/sendEmail.js";
 import { providerEnum } from "../../utils/enums/user.enum.js";
-import { redisDel, redisGet, redisSet, redisTTL } from "../../utils/redis/redis.service.js";
+import { redisDel, redisKeys, redisGet, redisSet, redisTTL, revokeTokenKey } from "../../utils/redis/redis.service.js";
 import {
   badRequestException,
   conflictException,
@@ -20,7 +20,7 @@ import {
   generateToken,
   verifyToken,
 } from "../../utils/security/token/token.js";
-
+import { nanoid } from "nanoid"
 
 export const signUpService = async (req, res) => {
   const {
@@ -143,6 +143,7 @@ export const loginService = async (req, res) => {
     unauthorizedException("Invalid email or password");
   }
 
+  const jti = nanoid()
   const accessToken = await generateToken(
     {
       _id: user.id,
@@ -151,6 +152,7 @@ export const loginService = async (req, res) => {
     process.env.ACCESS_TOKEN,
     {
       expiresIn: "10m",
+      jwtid: jti,
     },
   );
 
@@ -162,9 +164,11 @@ export const loginService = async (req, res) => {
     process.env.REFRESH_TOKEN,
     {
       expiresIn: "7d",
+      jwtid: jti,
     },
   );
 
+  await redisSet(revokeTokenKey(user.id, jti), jti, 7 * 24 * 60)
   successResponse({
     res,
     message: "User logged in Successfully",
@@ -328,5 +332,28 @@ export const resetPasswordService = async(req, res)=> {
   successResponse({
     res,
     message: "Password changed successfully",
+  })
+}
+
+export const logout = async(req, res)=> {
+  const user = req.user
+  const payload = req.decodedToken
+  const key = revokeTokenKey(user._id, payload.jti)
+  await redisDel(key)
+  successResponse({
+    res,
+    message: "logged out successfully",
+  })
+}
+
+export const logoutAll = async(req, res)=> {
+  const user = req.user
+  
+  const keys = await redisKeys(`Users:login:${req.user.id}:*`)
+  await redisDel(keys)
+  
+  successResponse({
+    res,
+    message: "logged out from all devices successfully",
   })
 }

@@ -3,9 +3,7 @@ import { globalErrorHandler } from ".//utils/responses/error.response.js";
 import { connectDB } from "./DB/db.connection.js";
 import userRouter from "./modules/user/user.controller.js";
 import authRouter from "./modules/auth/auth.controller.js"
-import { connectRedis } from "./utils/redis/redis.connection.js";
-
-export const redisClient = await connectRedis()
+import redisClient from "./utils/redis/redis.connection.js";
 
 export const bootstrap = async (express, app) => {
   app.use(express.json());
