@@ -186,12 +186,13 @@ export const refreshToken = async (req, res) => {
     badRequestException("Invalid authentication method");
   }
   token = token.split(" ")[1];
-  const tokenValidation = verifyToken(token, process.env.REFRESH_TOKEN);
-  const user = await User.findById(tokenValidation._id);
+  const payload = verifyToken(token, process.env.REFRESH_TOKEN);
+  const user = await User.findById(payload._id);
   if (!user) {
     notFoundException("user not found");
   }
 
+  const jti = await redisGet(await revokeTokenKey(user.id, payload.jti))
   const accessToken = await generateToken(
     {
       _id: user.id,
@@ -200,6 +201,7 @@ export const refreshToken = async (req, res) => {
     process.env.ACCESS_TOKEN,
     {
       expiresIn: "10m",
+      jwtid: jti,
     },
   );
 
