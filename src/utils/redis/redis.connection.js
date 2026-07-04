@@ -5,6 +5,6 @@ const connectRedis = await createClient({
   })
 
 connectRedis.on("connect", () => console.log("redis connected successfully"));
-connectRedis.on("error", (e) => console.log("can not connect to redis", e));
+connectRedis.on("error", (e) => console.log("cannot connect to redis", e));
 
 export default connectRedis

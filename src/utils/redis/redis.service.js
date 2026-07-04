@@ -21,10 +21,10 @@ export const redisTTL = (path)=> {
   return redisClient.TTL(path)
 }
 
-export const revokeTokenKey = (userId, jti)=> {
-  return `Users:login:${userId}:${jti}`
-}
-
 export const redisKeys = (path)=> {
   return redisClient.keys(path)
+}
+
+export const revokeTokenKey = (userId, jti)=> {
+  return `Users:login:${userId}:${jti}`
 }

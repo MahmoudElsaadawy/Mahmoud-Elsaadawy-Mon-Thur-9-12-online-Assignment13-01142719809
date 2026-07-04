@@ -280,6 +280,7 @@ export const forgetPasswordService = async(req, res)=> {
     badRequestException(`wait ${ttl} seconds before requesting the email again`)
   }
 
+  const jti = nanoid()
   const resetToken = await generateToken(
     {
       _id: user.id,
@@ -288,10 +289,11 @@ export const forgetPasswordService = async(req, res)=> {
     process.env.FORGET_PASSWORD_TOKEN,
     {
       expiresIn: "10m",
+      jwtid: jti,
     },
   );
-
-  await redisSet(`Users:${user._id}:otp:passwordReset`, resetToken, 10)
+  
+  await redisSet(`Users:${user._id}:otp:passwordReset`, jti, 10)
   
   const link = `${process.env.BASE_URL}${process.env.PORT}/api/v1/auth/reset-password/${resetToken}`
 
@@ -320,9 +322,14 @@ export const resetPasswordService = async(req, res)=> {
     notFoundException("user not found");
   }
 
-  const userResetToken = await redisGet(`Users:${user._id}:otp:passwordReset`)
-  if (userResetToken != token){
+  const userJti = await redisGet(`Users:${user._id}:otp:passwordReset`)
+  if (userJti != tokenValidation.jti){
     badRequestException("invalid or expired link please request another one")
+  }
+  
+  const isPassTheSame = await compare(password, user.password)
+  if(isPassTheSame){
+    badRequestException("password cannot be the same as the last one")
   }
 
   await redisDel(`Users:${user._id}:otp:passwordReset`)
