@@ -1,10 +1,10 @@
 import { Router } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { validation } from "../../middleware/valdation.middleware.js";
-import { confirmEmail, logout, logoutAll, forgetPasswordService, loginService, refreshToken, resendOtpService, resetPasswordService, signUpService, socialLogin } from "./auth.service.js";
-import { loginSchema, resetPasswordSchema, signUpSchema } from "./auth.validation.js";
 import { auth } from "../../middleware/auth.middleware.js";
+import { validation } from "../../middleware/valdation.middleware.js";
+import { confirmEmail, forgetPasswordService, loginService, logout, logoutAll, refreshToken, resendOtpService, resetPasswordService, signUpService, socialLogin } from "./auth.service.js";
+import { loginSchema, resetPasswordSchema, signUpSchema } from "./auth.validation.js";
 
 const router = Router()
 const dirname = path.dirname(fileURLToPath(import.meta.url));

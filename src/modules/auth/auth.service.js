@@ -1,11 +1,12 @@
 import { OAuth2Client } from "google-auth-library";
+import { nanoid } from "nanoid";
 import User from "../../DB/models/user.model.js";
 import { generateForgetPasswordHtml } from "../../utils/email/html.forgetPassword.template.js";
 import { generateOtpHtml } from "../../utils/email/html.otp.template.js";
 import { createOtp } from "../../utils/email/otp.js";
 import { sendEmail } from "../../utils/email/sendEmail.js";
 import { providerEnum } from "../../utils/enums/user.enum.js";
-import { redisDel, redisKeys, redisGet, redisSet, redisTTL, revokeTokenKey } from "../../utils/redis/redis.service.js";
+import { redisDel, redisGet, redisKeys, redisSet, redisTTL, revokeTokenKey } from "../../utils/redis/redis.service.js";
 import {
   badRequestException,
   conflictException,
@@ -20,7 +21,6 @@ import {
   generateToken,
   verifyToken,
 } from "../../utils/security/token/token.js";
-import { nanoid } from "nanoid"
 
 export const signUpService = async (req, res) => {
   const {
@@ -318,14 +318,14 @@ export const forgetPasswordService = async(req, res)=> {
 export const resetPasswordService = async(req, res)=> {
   const { token } = req.params
   const { password } = req.body
-  const tokenValidation = verifyToken(token, process.env.FORGET_PASSWORD_TOKEN);
-  const user = await User.findById(tokenValidation._id);
+  const payload = verifyToken(token, process.env.FORGET_PASSWORD_TOKEN);
+  const user = await User.findById(payload._id);
   if (!user) {
     notFoundException("user not found");
   }
 
   const userJti = await redisGet(`Users:${user._id}:otp:passwordReset`)
-  if (userJti != tokenValidation.jti){
+  if (userJti != payload.jti){
     badRequestException("invalid or expired link please request another one")
   }
   

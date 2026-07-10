@@ -6,7 +6,7 @@ export const validation = (schema) => {
     const reqData = Object.keys(schema);
     const validationErrors = [];
     reqData.map(ele => {
-        const validationRes = schema[ele].validate(req[ele], { abortEarly: false    });
+        const validationRes = schema[ele].validate(req[ele], { abortEarly: false });
         if (validationRes.error) {
           validationErrors.push(validationRes.error);
         }
