@@ -39,7 +39,7 @@ export const uploadFiles = ({
   fileType = "file",
   })=> {
     const storage = diskStorage({
-      destination: async(req, fileType, cb)=> {
+      destination: async(req, file, cb)=> {
         const folderName = `./uploads/${destination}`
         try{
           await fs.access(folderName)
@@ -48,23 +48,21 @@ export const uploadFiles = ({
             recursive: true,
           })
         }
-        cb(null, folderName)
+        return cb(null, folderName)
       },
-      filename: async(req, fileType, cb)=> {
-      const fileExtention = fileType.mimetype.split("/")[1]
-      if (req.file){
-        const folderInfo = await fs.readdir(`./uploads/${destination}`)
-        const avatarFile = folderInfo.find(file => file.split(".")[0] == req.user._id)
+      filename: async(req, file, cb)=> {
+      const fileExtention = file.mimetype.split("/")[1]
+      if (fileType == "file"){
         return cb(null, `${req.user._id}.${fileExtention}`)
       }
       return cb(null, `${crypto.randomInt(1, 100000000)}.${fileExtention}`)
     },
   })
-  const fileFilter = (req, fileType, cb)=> {
-    if (!fileValidation.includes(fileType.mimetype)){
-      cb(new Error ("file type not allowed"), false)
+  const fileFilter = (req, file, cb)=> {
+    if (!fileValidation.includes(file.mimetype)){
+      return cb(new Error ("file type not allowed"), false)
     }
-    cb(null, true)
+    return cb(null, true)
   }
 
   return multer({

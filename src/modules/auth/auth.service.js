@@ -297,7 +297,7 @@ export const forgetPasswordService = async(req, res)=> {
   
   await redisSet(`Users:${user._id}:otp:passwordReset`, jti, 10)
   
-  const link = `${process.env.BASE_URL}${process.env.PORT}/api/v1/auth/reset-password/${resetToken}`
+  const link = `${process.env.BASE_URL}:${process.env.PORT}/api/v1/auth/reset-password/${resetToken}`
 
   sendEmail({
     to: user.email,

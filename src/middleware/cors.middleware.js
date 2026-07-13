@@ -1,12 +1,19 @@
 export const corsArgs= {
   origin: function(origin, callback) {
     const whiteList = [
+      "http://localhost:3001",
+      "http://localhost:3000",
       "http://127.0.0.1:5501",
       "http://127.0.0.1:5500",
       "https://www.google.com",
     ]
+
+    if (!origin && process.env.SERVER_STATUS == "development") {
+      return callback(null, true)
+    }
+
     if (!whiteList.includes(origin)) {
-      callback(new Error("origin not allowed"))
+      return callback(new Error("origin not allowed"))
     }
     callback(null, origin)
   },
