@@ -4,7 +4,6 @@ import {
   RoleEnum,
   providerEnum,
 } from "../../utils/enums/user.enum.js";
-import { decrypt } from "../../utils/security/encryption/encrypt.js";
 
 const userSchema = new Schema(
   {

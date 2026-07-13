@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { auth, authorization } from "../../middleware/auth.middleware.js";
 import { validation } from "../../middleware/valdation.middleware.js";
-import { coverPicsService, handelPicsResponse, profilePicService, profileService, updateEmailService , confirmUpdateEmailService, updatePasswordService } from "./user.service.js";
+import { confirmUpdateEmailService, coverPicsService, handelPicsResponse, profilePicService, profileService, updateEmailService, updatePasswordService } from "./user.service.js";
 import { updatePassSchema } from "./user.validation.js";
 
 const router = Router()

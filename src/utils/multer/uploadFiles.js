@@ -37,7 +37,6 @@ export const uploadFiles = ({
   fileSize = 3 * 1024 * 1024,
   fileValidation = allowedMimeTypes.imageMimeTypes,
   fileType = "file",
-  fileTypeTmp = fileType
   })=> {
     const storage = diskStorage({
       destination: async(req, fileType, cb)=> {
@@ -53,7 +52,7 @@ export const uploadFiles = ({
       },
       filename: async(req, fileType, cb)=> {
       const fileExtention = fileType.mimetype.split("/")[1]
-      if (fileTypeTmp == "file"){
+      if (req.file){
         const folderInfo = await fs.readdir(`./uploads/${destination}`)
         const avatarFile = folderInfo.find(file => file.split(".")[0] == req.user._id)
         return cb(null, `${req.user._id}.${fileExtention}`)
