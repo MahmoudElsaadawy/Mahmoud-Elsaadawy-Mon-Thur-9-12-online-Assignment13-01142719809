@@ -1,7 +1,7 @@
 import redisClient from "./redis.connection.js"
 
-export const redisSet = async(path, otp, time)=> {
-  return await redisClient.set(path, otp, {
+export const redisSet = async(path, value, time)=> {
+  return await redisClient.set(path, value, {
     expiration: {
       type: "ex",
       value: time * 60,

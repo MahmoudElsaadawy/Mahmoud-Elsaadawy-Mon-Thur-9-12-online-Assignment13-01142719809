@@ -1,12 +1,10 @@
-import {
-  badRequestException,
-  notFoundException,
-  unauthorizedException,
-} from "../../utils/responses/error.response.js";
-import User from "../../DB/models/user.model.js";
 import Message from "../../DB/models/message.model.js";
-import { successResponse } from "../../utils/responses/success.response.js"
-import mongoose from "mongoose";
+import User from "../../DB/models/user.model.js";
+import {
+  notFoundException,
+  unauthorizedException
+} from "../../utils/responses/error.response.js";
+import { successResponse } from "../../utils/responses/success.response.js";
 
 export const sendMessagesService = async (req, res)=> {
   const { content, to } = req.body;
@@ -25,7 +23,7 @@ export const sendMessagesService = async (req, res)=> {
   }
 
   const message = await Message.create({
-    content,
+    body: content,
     attachments,
     receiver: receiver._id,
   });
@@ -33,7 +31,7 @@ export const sendMessagesService = async (req, res)=> {
   successResponse({
     res,
     message: "message sent successfully",
-    data: files,
+    data: {content, ...attachments},
   })
 };
 

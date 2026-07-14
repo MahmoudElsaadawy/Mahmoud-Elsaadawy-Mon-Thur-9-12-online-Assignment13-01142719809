@@ -2,6 +2,7 @@ import { Router } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { auth } from "../../middleware/auth.middleware.js";
+import { myRateLimiter } from "../../middleware/rateLimit.middleware.js";
 import { validation } from "../../middleware/valdation.middleware.js";
 import { confirmEmail, forgetPasswordService, loginService, logout, logoutAll, refreshToken, resendOtpService, resetPasswordService, signUpService, socialLogin } from "./auth.service.js";
 import { loginSchema, resetPasswordSchema, signUpSchema } from "./auth.validation.js";
@@ -12,7 +13,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 router.post("/signup", validation(signUpSchema),signUpService)
 router.patch("/confirm-email", confirmEmail)
 router.patch("/resend-confirm-mail-otp", auth, resendOtpService)
-router.post("/login", validation(loginSchema), loginService)
+router.post("/login", validation(loginSchema), myRateLimiter(1, 3), loginService)
 router.post("/refresh-token", refreshToken)
 
 router.post("/social-login", socialLogin)

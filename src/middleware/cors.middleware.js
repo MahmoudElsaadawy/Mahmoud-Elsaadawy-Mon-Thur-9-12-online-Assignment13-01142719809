@@ -1,5 +1,5 @@
 export const corsArgs= {
-  origin: function(origin, callback) {
+  origin: (origin, callback)=> {
     const whiteList = [
       "http://localhost:3001",
       "http://localhost:3000",
